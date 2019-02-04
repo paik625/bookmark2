@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% block title %}
+    Bookmark List
+{% endblock %}
+
+{% block content %}
+    <div class="btn-group d-block text-right mb-1" role="group">
+        <a href="{% url 'bookmark:write' %}" class="btn btn-info">Add Bookmark</a>
+    </div>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Site</th>
+                <th scope="col">URL</th>
+                <th scope="col">Modify</th>
+                <th scope="col">Delete</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for bookmark in object_list %}
+                <tr>
+                    <td>
+                        {{ object.id }}
+                    </td>
+                    <td>
+                        <a href="{% url 'bookmark:detail' bookmark.id %}">{{bookmark.site_name}}</a>
+                    </td>
+                    <td>
+                        {{bookmark.url}}
+                    </td>
+                    <td><a href="{% url 'bookmark:update' bookmark.id %}" class="btn btn-success btn-sm">Modify</a></td>
+                    <td><a href="{% url 'bookmark:delete' bookmark.id %}" class="btn btn-danger btn-sm">Delete</a></td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
+
+{% block pagination %}
+  {% if is_paginated %}
+    <ul class="pagination justify-content-center pagination-sm">
+        {% if page_obj.has_previous %}
+          {% if not search %}
+          <li class="page-item">
+              <a class="page-link" href="{% url 'bookmark:list' %}?page={{ page_obj.previous_page_number }}" tabindex="-1">Previous</a>
+          </li>
+          {% else %}
+            <li class="page-item">
+              <a class="page-link" href="{% url 'bookmark:list' %}?{{search}}&page={{ page_obj.previous_page_number }}" tabindex="-1">Previous</a>
+          </li>
+          {% endif %}
+        {% else %}
+        <li class="page-item disabled">
+            <a class="page-link" href="#" tabindex="-1">Previous</a>
+        </li>
+        {% endif %}
+
+        {% for object in page_obj.paginator.page_range %}
+            <li class="page-item {% if page_obj.number == forloop.counter %}disabled{% endif %}"><a class="page-link" href="{{ request.path }}?page={{ forloop.counter }}">{{ forloop.counter }}</a></li>
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+          {% if not search %}
+          <li class="page-item">
+              <a class="page-link" href="{% url 'bookmark:list' %}?page={{ page_obj.next_page_number }}">Next</a>
+          </li>
+          {% else %}
+            <li class="page-item">
+              <a class="page-link" href="{% url 'bookmark:list' %}?{{search}}&page={{ page_obj.next_page_number }}">Next</a>
+          </li>
+          {% endif %}
+        {% else %}
+        <li class="page-item disabled">
+            <a class="page-link" href="#">Next</a>
+        </li>
+        {% endif %}
+    </ul>
+  {% endif %}
+{% endblock %}
